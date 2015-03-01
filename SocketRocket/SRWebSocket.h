@@ -41,6 +41,7 @@ typedef enum SRStatusCode : NSInteger {
 
 extern NSString *const SRWebSocketErrorDomain;
 extern NSString *const SRHTTPResponseErrorKey;
+extern NSString *const SRHTTPResponseHeadersErrorKey;
 
 #pragma mark - SRWebSocketDelegate
 
