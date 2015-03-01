@@ -144,6 +144,7 @@ static NSString *newSHA1String(const char *bytes, size_t length) {
 
 NSString *const SRWebSocketErrorDomain = @"SRWebSocketErrorDomain";
 NSString *const SRHTTPResponseErrorKey = @"HTTPResponseStatusCode";
+NSString *const SRHTTPResponseHeadersErrorKey = @"HTTPResponseHeaders";
 
 // Returns number of bytes consumed. Returning 0 means you didn't match.
 // Sends bytes to callback handler;
@@ -446,7 +447,8 @@ static __strong NSData *CRLFCRLF;
     
     if (responseCode >= 400) {
         SRFastLog(@"Request failed with response code %d", responseCode);
-        [self _failWithError:[NSError errorWithDomain:SRWebSocketErrorDomain code:2132 userInfo:@{NSLocalizedDescriptionKey:[NSString stringWithFormat:@"received bad response code from server %ld", (long)responseCode], SRHTTPResponseErrorKey:@(responseCode)}]];
+        NSDictionary *responseHeaders = CFBridgingRelease(CFHTTPMessageCopyAllHeaderFields(_receivedHTTPHeaders));
+        [self _failWithError:[NSError errorWithDomain:SRWebSocketErrorDomain code:2132 userInfo:@{NSLocalizedDescriptionKey:[NSString stringWithFormat:@"received bad response code from server %ld", (long)responseCode], SRHTTPResponseErrorKey:@(responseCode), SRHTTPResponseHeadersErrorKey:responseHeaders}]];
         return;
     }
     
