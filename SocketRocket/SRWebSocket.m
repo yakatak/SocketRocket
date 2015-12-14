@@ -1482,7 +1482,7 @@ static const size_t SRFrameHeaderOverhead = 32;
                 return;
             }
             
-            if (aStream == _outputStream && _pinnedCertFound) {
+            if (aStream == _outputStream) {
                 dispatch_async(_workQueue, ^{
                     [self didConnect];
                 });
@@ -1498,8 +1498,10 @@ static const size_t SRFrameHeaderOverhead = 32;
                     return;
                 }
                 assert(_readBuffer);
+
+                BOOL usingPinnedCerts = [[_urlRequest SR_SSLPinnedCertificates] count] > 0;
                 
-                if (!_secure && self.readyState == SR_CONNECTING && aStream == _inputStream) {
+                if ((!_secure || !usingPinnedCerts) && self.readyState == SR_CONNECTING && aStream == _inputStream) {
                     [self didConnect];
                 }
                 [self _pumpWriting];
